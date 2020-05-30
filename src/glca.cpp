@@ -748,7 +748,7 @@ NumericVector GetFitted(IntegerMatrix pattern,
 
    clike = MeasProd(pattern, rho, pattern.nrow(),
                     C, M, R, clone(clike));
-   fitted = exp(log(N) + log(rowSums(clike)) -
+   fitted = exp(log(1.0 * N) + log(rowSums(clike)) -
       log(std::numeric_limits<double>::max()));
 
    return fitted;

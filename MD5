@@ -1,4 +1,4 @@
-93509fcfdcf09440dde2e2bc69289af2 *DESCRIPTION
+04e595689a337822f3887883c1d95a22 *DESCRIPTION
 7fb60bd9dd5a35a75527327ae745161f *NAMESPACE
 3a9f2517a8ca6c7fd3a18ba13b5c3944 *R/RcppExports.R
 d9646cee817a421224b23f8da2553c9a *R/auxfun.R
@@ -20,7 +20,7 @@ d1fb34d040e6250c5a91882c5175384d *R/plot.glca.R
 e0f80445130eaabf12f8005d8cc310c2 *R/print.glca.R
 c6cc58928539bd5c2bb4ffec708bc6be *R/print.glca.gof.R
 07c0cab1ac499577a01b3d66d93bc582 *R/summary.glca.R
-31d0ae4ad2a94c584e0ca029bc8f4753 *build/partial.rdb
+3eec6a54a4990482122801c91d6d70bf *build/partial.rdb
 598bac00bee6ebdfdba8f2cf6e9e5319 *data/brfss.rda
 65bfec41259087ed1deaaa3953591711 *data/gss.rda
 c3d056bd26c46aa53e73522df636fb4d *data/nhanes.rda
@@ -35,4 +35,4 @@ b49aa7d72bf2349814b0583593c7da94 *man/nhanes.Rd
 7836e6a7034f7aef39964ade0245e8cb *man/plot.glca.Rd
 24274682beddd02c0d1383cdfd6fcc30 *man/summary.glca.Rd
 1af25797c11aca807a6b9a2986210407 *src/RcppExports.cpp
-124bed44b27e69a9772ba426527ffc8d *src/glca.cpp
+88030ad2f8ce76e3d3ab0b98fb772118 *src/glca.cpp
