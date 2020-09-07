@@ -7,6 +7,8 @@ glca_em <- function(
    C <- model$C; W <- model$W
    M <- model$M; R <- model$R
    P <- model$P; Q <- model$Q
+   measure.inv <- model$measure.inv
+   coeff.inv <- model$coeff.inv
 
    y <- datalist$y; x <- datalist$x; z <- datalist$z
 
@@ -21,8 +23,8 @@ glca_em <- function(
    param = list()
 
    # EM iteration
-   if (W == 0) {
-      if (P == 1) {
+   if (W == 0L) {
+      if (P == 1L) {
          for (iter in miniter:maxiter)
          {
             # E-step
@@ -30,7 +32,7 @@ glca_em <- function(
 
             # M-step
             n_gamma <- UpGamma(Post, Ng, G, C)
-            if (model$measure.inv)
+            if (measure.inv)
                n_rho <- UpRhoR(y, Post, rho, Ng, G, C, M, R)
             else
                n_rho <- UpRhoU(y, Post, rho, Ng, G, C, M, R)
@@ -39,9 +41,9 @@ glca_em <- function(
                            max(abs(unlist(n_rho) - unlist(rho))))
 
             if (verbose) {
-               if (iter %% 100 == 0)
+               if (iter %% 100L == 0L)
                   cat(".")
-               if (iter %% 1000 == 0)
+               if (iter %% 1000L == 0L)
                   cat("", iter, "iteration \n")
             }
 
@@ -60,18 +62,33 @@ glca_em <- function(
          for (iter in miniter:maxiter)
          {
             # E-step
-            exb <- lapply(1:G, function(g) exp(x[[g]] %*% beta[[g]]))
-            gamma <- lapply(exb, function(x) cbind(x, 1) / (rowSums(x) + 1))
+            exb <- lapply(1L:G, function(g) exp(x[[g]] %*% beta[[g]]))
+            gamma <- lapply(exb, function(x) cbind(x, 1L) / (rowSums(x) + 1L))
             Post <- GetPost(y, gamma, rho, Ng, G, C, M, R)
-            n_beta = list()
-            for (g in 1:G) {
-               gradhess <- GetDeriv(Post[[g]], x[[g]], gamma[[g]], Ng[g], C, P)
-               diff <- try(matrix(MASS::ginv(-gradhess[[2]]) %*% gradhess[[1]], P), TRUE)
+
+            if (coeff.inv) {
+               Amat <- cbind(diag(G * (C - 1L)) %x% c(1L, numeric(P - 1L)),
+                            rep(1L, G) %x% diag(C - 1L) %x% rbind(0L, diag(P - 1L)))
+               gradhess <- GetDeriv2(Post, x, gamma, Ng, G, C, P)
+               diff <- try(Amat %*% (MASS::ginv(gradhess[[2L]]) %*% gradhess[[1L]]), TRUE)
+
                if (inherits(diff, "try-error")) break
-               n_beta[[g]] = beta[[g]] + diff
+               n_beta = lapply(1L:G, function(g)
+                  beta[[g]]- matrix(diff[((g - 1L) * (C - 1L) * P + 1L):(g* (C - 1L) * P)], P)
+               )
+            } else {
+               n_beta = list()
+
+               for (g in 1L:G) {
+                  gradhess <- GetDeriv(Post[[g]], x[[g]], gamma[[g]], Ng[g], C, P)
+                  diff <- try(matrix(MASS::ginv(gradhess[[2L]]) %*% gradhess[[1L]], P), TRUE)
+                  if (inherits(diff, "try-error")) break
+                  n_beta[[g]] = beta[[g]] - diff
+               }
             }
+
             if (inherits(diff, "try-error")) {
-               iter <- 1
+               iter <- 1L
                if (verbose)
                   cat("Fail to get Hessian inverse, restarted with new initial value.\n")
                init <- glca_init(model)
@@ -80,7 +97,7 @@ glca_em <- function(
                next
             }
 
-            if (model$measure.inv)
+            if (measure.inv)
                n_rho <- UpRhoR(y, Post, rho, Ng, G, C, M, R)
             else
                n_rho <- UpRhoU(y, Post, rho, Ng, G, C, M, R)
@@ -89,9 +106,9 @@ glca_em <- function(
                            max(abs(unlist(n_rho) - unlist(rho))))
 
             if (verbose) {
-               if (iter %% 100 == 0)
+               if (iter %% 100L == 0L)
                   cat(".")
-               if (iter %% 1000 == 0)
+               if (iter %% 1000L == 0L)
                   cat("", iter, "iteration \n")
             }
 
@@ -110,21 +127,14 @@ glca_em <- function(
       }
 
       llik <- GetLik(y, gamma, rho, Ng, G, C, M, R)
-      gamma_m <- list(
-         matrix(colMeans(do.call(rbind, Post)),
-                sum(Ng), C, byrow = TRUE)
-      )
-      rho_m <- UpRhoR(y, Post, rho, Ng, G, C, M, R)[1]
-      nullik <- GetLik(list(do.call(rbind, y)), gamma_m, rho_m,
-                     sum(Ng), 1, C, M, R)
    } else {
-      if (P == 1 && Q == 0) {
+      if (P == 1L && Q == 0L) {
          for (iter in miniter:maxiter) {
             # E-step
             Post <- GetUDPost(y, delta, gamma, rho, Ng, G, W, C, M, R)
 
             # M-step
-            n_delta <- UpDelta(Post$PostW)
+            n_delta <- UpDelta(Post$PostW / rowSums(Post$PostW))
             n_gamma <- UpGammaML(Post$PostWC, W, C)
             n_rho   <- UpRhoML(y, Post$PostC, rho, Ng, G, C, M, R)
 
@@ -133,9 +143,9 @@ glca_em <- function(
                            max(abs(unlist(n_rho) - unlist(rho))))
 
             if (verbose) {
-               if (iter %% 100 == 0)
+               if (iter %% 100L == 0L)
                   cat(".")
-               if (iter %% 1000 == 0)
+               if (iter %% 1000L == 0L)
                   cat("", iter, "iteration \n")
             }
 
@@ -157,25 +167,25 @@ glca_em <- function(
       } else {
          for (iter in miniter:maxiter) {
             # E-step
-            if (Q > 0)
+            if (Q > 0L)
                beta2 <- matrix(
-                  beta[(W * (C - 1) * P + 1):(W * (C - 1) * P + Q * (C - 1))],
-                  Q, C - 1)
+                  beta[(W * (C - 1L) * P + 1L):(W * (C - 1L) * P + Q * (C - 1L))],
+                  Q, C - 1L)
             else
                beta2 <- NULL
 
-            gamma <- lapply(1:G, function(g) lapply(1:W, function(w)
+            gamma <- lapply(1L:G, function(g) lapply(1L:W, function(w)
             {
                beta1 <- matrix(
-                  beta[((w - 1) * (C - 1) * P + 1):(w * (C - 1) * P)],
-                  P, C - 1)
+                  beta[((w - 1L) * (C - 1L) * P + 1L):(w * (C - 1L) * P)],
+                  P, C - 1L)
                xb <- x[[g]] %*% beta1
-               if (Q > 0)
+               if (Q > 0L)
                   zb <- z[[g]] %*% beta2
                else
-                  zb <- 0
+                  zb <- 0L
                exzb <- exp(xb + zb)
-               return(cbind(exzb, 1) / (rowSums(exzb) + 1))
+               return(cbind(exzb, 1L) / (rowSums(exzb) + 1L))
             }
             ))
 
@@ -183,10 +193,28 @@ glca_em <- function(
                                Ng, G, W, C, P, Q, M, R)
 
             # M-step
-            n_delta <- colSums(Post$PostW) / sum(Post$PostW)
-            n_beta  <- try(beta - MASS::ginv(Post$hess) %*% Post$grad, TRUE)
+            n_delta <- UpDelta(Post$PostW / rowSums(Post$PostW))
+
+            if (coeff.inv) {
+               if (P > 1L)
+                  A1 = cbind(diag(W * (C - 1L)) %x% c(1L, numeric(P - 1L)),
+                             rep(1L, W) %x% diag(C - 1L) %x% rbind(0L, diag(P - 1L)))
+               else
+                  A1 = diag(W * (C - 1L))
+               A2 = diag((C - 1L) * Q)
+               d1 = dim(A1); d2 = dim(A2)
+               Amat = array(0L, dim = rev(d1 + d2))
+               Amat[1L:d1[2L], 1L:d1[1L]] = t(A1)
+               Amat[-(1L:d1[2L]), -(1L:d1[1L])] = A2
+
+               hess <- Amat %*% Post$hess %*% t(Amat)
+               grad <- Amat %*% Post$grad
+               n_beta  <- try(beta - t(Amat) %*% MASS::ginv(hess) %*% grad, TRUE)
+            } else
+               n_beta  <- try(beta - MASS::ginv(Post$hess) %*% Post$grad, TRUE)
+
             if (inherits(n_beta, "try-error")) {
-               iter <- 1
+               iter <- 1L
                if (verbose)
                   cat("Fail to get Hessian inverse, restarted with new initial value.\n")
                init <- glca_init(model)
@@ -195,6 +223,7 @@ glca_em <- function(
                rho   <- init$rho
                next
             }
+
             n_rho   <- UpRhoML(y, Post$PostC, rho, Ng, G, C, M, R)
 
             maxdiff <- max(max(abs(unlist(n_delta) - unlist(delta))),
@@ -202,9 +231,9 @@ glca_em <- function(
                            max(abs(unlist(n_rho) - unlist(rho))))
 
             if (verbose) {
-               if (iter %% 100 == 0)
+               if (iter %% 100L == 0L)
                   cat(".")
-               if (iter %% 1000 == 0)
+               if (iter %% 1000L == 0L)
                   cat("", iter, "iteration \n")
             }
 
@@ -225,20 +254,7 @@ glca_em <- function(
 
          llik = GetUDlikX(y, delta, gamma, rho, Ng, G, W, C, M, R)
       }
-
-      gamma_m = list(
-         matrix(colMeans(do.call(rbind, Post$PostC)),
-                sum(Ng), C, byrow = TRUE)
-      )
-      rho_m = list(rho)
-      nullik <- GetLik(list(do.call(rbind, y)), gamma_m, rho_m,
-                     sum(Ng), 1, C, M, R)
    }
-
-   model0 <- list(Ng = Ng, G = G, W = 0, C = C,
-                  M = M, R = R, P = 1, Q = 0)
-   param0 <- list(gamma = t(sapply(1:G, function(g) colMeans(gamma_m[[1]]))),
-                  rho = lapply(1:G, function(g) rho_m[[1]]))
 
    if (verbose) {
       if (converged)
@@ -251,7 +267,6 @@ glca_em <- function(
 
    return(
       list(param = param, posterior = Post, loglik = llik,
-           model0 = model0, param0 = param0, nullik = nullik,
            niter = iter, converged = converged)
    )
 }

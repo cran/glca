@@ -4,10 +4,24 @@
 \alias{glca}
 \title{Fits Latent Class Models for Data Containing Group Variable and Covariates}
 \usage{
-glca(formula, group = NULL, data = NULL, nclass = 3, ncluster = 0,
-  measure.inv = TRUE, std.err = TRUE, init.param = NULL,
-  n.init = 1, testiter = 50, maxiter = 1000, eps = 1e-06,
-  na.rm = FALSE, random.seed = NULL, verbose = TRUE)
+glca(
+  formula,
+  group = NULL,
+  data = NULL,
+  nclass = 3,
+  ncluster = NULL,
+  std.err = TRUE,
+  measure.inv = TRUE,
+  coeff.inv = TRUE,
+  init.param = NULL,
+  n.init = 10,
+  testiter = 50,
+  maxiter = 1000,
+  eps = 1e-06,
+  na.rm = FALSE,
+  random.seed = NULL,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{formula}{a formula for specifying manifest items and covariates using the "\code{item}" function}
@@ -20,9 +34,11 @@ glca(formula, group = NULL, data = NULL, nclass = 3, ncluster = 0,
 
 \item{ncluster}{number of level-2 (group-level) latent classes. When \code{group} and \code{ncluster} (>1) are given the multilevel latent class models will be fitted.}
 
+\item{std.err}{a logical value for whether calculating standard errors for estimates}
+
 \item{measure.inv}{a logical value of the measurement invariance assumption across groups}
 
-\item{std.err}{a logical value for whether calculating standard errors for estimates}
+\item{coeff.inv}{a logical value of the coefficient invariance assumption across groups (random intercept model)}
 
 \item{init.param}{a list which contains user-defined initial parameter}
 
@@ -48,6 +64,7 @@ The function \code{summary} prints estimates for parameters and \code{glca.gof} 
 An object of class "\code{glca}" is a list containing the following components:
 
 \item{call}{the matched call}
+\item{call}{the \code{\link{terms}} object used.}
 \item{model}{a list of model description}
 \item{datalist}{a list of data used for fitting}
 \item{param}{a list of parameter estimates}
@@ -65,7 +82,7 @@ The \code{glca} is the function for implementing LCA consist of two-type latent 
 
 The formula should consist of an \code{~} operator between two sides. Manifest items should be indicated in LHS of formula using \code{item} function and covariates should be specified in RHS of formula. For example, \cr
 \code{item(y1, y2, y3) ~ 1}\cr
-\code{item(y1, y2, y3) ~ x1 + x2}
+\code{item(y1, y2, y3) ~ x1 + x2}\cr
 where the first fomula indicates LCA with three manifest variables (\code{y1}, \code{y2}, and \code{y3}) and no covariate, and the second formula includes two covariates (\code{x1} and \code{x2}). Two types of covariates (i.e., level-1 and level-2 covariates) will be automatically detected by \code{glca}.
 
 The estimated parameters in \code{glca} are \code{rho}, \code{gamma}, \code{delta}, and \code{beta}. The set of item response probabilities for each level-1 class is \code{rho}. The sets of prevalences for level-1 and level-2 class are \code{gamma} and \code{delta}, respectively. The prevalence for level-1 class (i.e., \code{gamma}) can be modeled as logistic regression using level-1 and/or level-2 covariates. The set of logistic regression coefficients is \code{beta} in \code{glca} output.
@@ -74,45 +91,44 @@ The estimated parameters in \code{glca} are \code{rho}, \code{gamma}, \code{delt
 ##
 ## Example 1. GSS dataset
 ##
-data("gss")
+data("gss08")
 # LCA
-lca = glca(item(ABDEFECT, ABHLTH, ABRAPE, ABPOOR, ABSINGLE) ~ 1,
-            data = gss, nclass = 3)
+lca = glca(item(DEFECT, HLTH, RAPE, POOR, SINGLE, NOMORE) ~ 1,
+            data = gss08, nclass = 3)
 summary(lca)
 
 # LCA with covariate(s)
-lcr = glca(item(ABDEFECT, ABHLTH, ABRAPE, ABPOOR, ABSINGLE) ~ AGE,
-           data = gss, nclass = 3)
+lcr = glca(item(DEFECT, HLTH, RAPE, POOR, SINGLE, NOMORE) ~ AGE,
+           data = gss08, nclass = 3)
 summary(lcr)
 coef(lcr)
 
 # Multiple-group LCA (MGLCA)
-mglca = glca(item(ABDEFECT, ABHLTH, ABRAPE, ABPOOR, ABSINGLE) ~ 1,
-             group = DEGREE, data = gss, nclass = 3)
+mglca = glca(item(DEFECT, HLTH, RAPE, POOR, SINGLE, NOMORE) ~ 1,
+             group = DEGREE, data = gss08, nclass = 3)
 summary(mglca)
 
 
 # Multiple-group LCA with covariate(s) (MGLCR)
-mglcr = glca(item(ABDEFECT, ABHLTH, ABRAPE, ABPOOR, ABSINGLE) ~ SEX,
-             group = DEGREE, data = gss, nclass = 3)
+mglcr = glca(item(DEFECT, HLTH, RAPE, POOR, SINGLE, NOMORE) ~ SEX,
+             group = DEGREE, data = gss08, nclass = 3)
 summary(mglcr)
 coef(mglcr)
 
 \donttest{
 ##
-## Example 2. BRFSS data
+## Example 2. NYTS data
 ##
-data("brfss")
+data("nyts18")
 # Multilevel LCA (MLCA)
-brfss1000 = brfss[sample(1:nrow(brfss), 1000),]
-mlca = glca(item(OBESE, PA300, FRTLT1A, VEGLT1A, SMOKER, DRNK30) ~ 1,
-            group = STATE, data = brfss1000, nclass = 3, ncluster = 2)
+mlca = glca(item(ECIGT, ECIGAR, ESLT, EELCIGT, EHOOKAH) ~ 1,
+            group = SCH_ID, data = nyts18, nclass = 3, ncluster = 2)
 summary(mlca)
 
 # MLCA with covariate(s) (MLCR)
-# (SEX: level-1 covariate, REGION: level-2 covariate)
-mlcr = glca(item(OBESE, PA300, FRTLT1A, VEGLT1A, SMOKER, DRNK30) ~ SEX + PARTY,
-            group = STATE, data = brfss1000, nclass = 3, ncluster = 2)
+# (HOME: level-1 covariate, School_lev: level-2 covariate)
+mlcr = glca(item(ECIGT, ECIGAR, ESLT, EELCIGT, EHOOKAH) ~ SEX + SCH_LEV,
+            group = SCH_ID, data = nyts18, nclass = 3, ncluster = 2)
 summary(mlcr)
 coef(mlcr)
 }
@@ -124,7 +140,7 @@ Vermunt, J.K. (2003) Multilevel latent class models. \emph{Sociological Methodol
 Collins, L.M. and Lanza, S.T. (2009) \emph{Latent Class and Latent Transition Analysis: With Applications in the Social, Behavioral, and Health Sciences}. John Wiley & Sons Inc.
 }
 \seealso{
-\code{\link{gss}} \code{\link{brfss}}
+\code{\link{gss08}} \code{\link{nyts18}}
 }
 \author{
 Youngsun Kim

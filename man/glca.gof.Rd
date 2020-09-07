@@ -4,19 +4,30 @@
 \alias{glca.gof}
 \title{Goodness of Fit Tests for Fitted \code{glca} Model}
 \usage{
-glca.gof(object, object2 = NULL, test = NULL, nboot = 25,
-  random.seed = NULL, maxiter = 500, eps = 1e-05, verbose = TRUE)
+glca.gof(
+  object,
+  ...,
+  test = NULL,
+  nboot = 50,
+  random.seed = NULL,
+  criteria = c("logLik", "AIC", "CAIC", "BIC", "entropy"),
+  maxiter = 500,
+  eps = 1e-04,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{object}{an object of "\code{glca}", usually, a result of a call to \code{glca}}
 
-\item{object2}{an optional object of "\code{glca}" to be compared with \code{object}}
+\item{...}{an optional object of "\code{glca}" to be compared with \code{object}}
 
 \item{test}{a character string indicating type of test (chi-square test or bootstrap) to obtain the p-value for goodness of fit test (\code{"chisq"} or \code{"boot"})}
 
 \item{nboot}{number of bootstrap samples, only used when \code{test = "boot"}}
 
 \item{random.seed}{random seed to have the equivalent solution for every bootstrap trials}
+
+\item{criteria}{a character vector indicating criteria to be printed.}
 
 \item{maxiter}{an integer for maximum number of iteration for bootstrap sample}
 
@@ -25,48 +36,49 @@ glca.gof(object, object2 = NULL, test = NULL, nboot = 25,
 \item{verbose}{an logical value for whether or not to print the result of a function's execution}
 }
 \value{
-\item{criteria}{a table with model fit criteria}
-\item{dev.table}{a table with deviance statistic and bootstrap p-value}
+\item{gtable}{a matrix with model goodneess-of-fit criteria}
+\item{dtable}{a matrix with deviance statistic and bootstrap p-value}
 \item{boot}{a list of LRT statistics from each bootstrap sample}
+
+\code{gtable}, which is always included in output of this function, includes goodness-of-fit criteria which are indicated \code{criteria} arguments for the \code{object}(s). \code{dtable} are contained when the \code{object}s are competing models. (when used items of the models are identical) \code{dtable} prints deviance and p-value. (bootstrap or chi-square) Lastly, when the boostrap sample is used, the \code{G^2}-statistics for each bootstrap samples will be included in return object..
 }
 \description{
-Provides AIC, BIC, and deviance statitistic for goodness of fit test for the fitted model. Given \code{object2}, the function computes the log-likelihood ratio (LRT) statisic for comparing the goodness of fit for two models. The bootstrap p-value can be obtained from the empirical distribution of LRT statistic by choosing \code{test = "boot"}.
+Provides AIC, CAIC, BIC, entropy and deviance statitistic for goodness of fit test for the fitted model. Given \code{object2}, the function computes the log-likelihood ratio (LRT) statisic for comparing the goodness of fit for two models. The bootstrap p-value can be obtained from the empirical distribution of LRT statistic by choosing \code{test = "boot"}.
 }
 \examples{
 ## Example 1.
 ## Model selection between two LCA models with different number of latent classes.
-data(gss)
-class2 = glca(item(ABDEFECT, ABHLTH, ABRAPE, ABPOOR, ABSINGLE) ~ 1,
-              data = gss, nclass = 2)
-class3 = glca(item(ABDEFECT, ABHLTH, ABRAPE, ABPOOR, ABSINGLE) ~ 1,
-              data = gss, nclass = 3)
+data(gss08)
+class2 = glca(item(DEFECT, HLTH, RAPE, POOR, SINGLE, NOMORE) ~ 1,
+              data = gss08, nclass = 2)
+class3 = glca(item(DEFECT, HLTH, RAPE, POOR, SINGLE, NOMORE) ~ 1,
+              data = gss08, nclass = 3)
+class4 = glca(item(DEFECT, HLTH, RAPE, POOR, SINGLE, NOMORE) ~ 1,
+              data = gss08, nclass = 4)
 
-glca.gof(class2, class3)
-\dontrun{glca.gof(class2, class3, test = "chisq")}
+glca.gof(class2, class3, class4)
 \dontrun{glca.gof(class2, class3, test = "boot")}
 
 ## Example 2.
 ## Model selection between two MLCA models with different number of latent clusters.
-cluster2 = glca(item(ABDEFECT, ABHLTH, ABRAPE, ABPOOR, ABSINGLE) ~ 1,
-                group = REGION, data = gss, nclass = 3, ncluster = 2, na.rm = TRUE)
-cluster3 = glca(item(ABDEFECT, ABHLTH, ABRAPE, ABPOOR, ABSINGLE) ~ 1,
-                group = REGION, data = gss, nclass = 3, ncluster = 3, na.rm = TRUE)
+cluster2 = glca(item(ECIGT, ECIGAR, ESLT, EELCIGT, EHOOKAH) ~ 1,
+                group = SCH_ID, data = nyts18, nclass = 2, ncluster = 2)
+cluster3 = glca(item(ECIGT, ECIGAR, ESLT, EELCIGT, EHOOKAH) ~ 1,
+                group = SCH_ID, data = nyts18, nclass = 2, ncluster = 3)
 
 glca.gof(cluster2, cluster3)
-\dontrun{glca.gof(cluster2, cluster3, test = "chisq")}
 \dontrun{glca.gof(cluster2, cluster3, test = "boot")}
 
 \donttest{
 ## Example 3.
 ## MGLCA model selection under the measurement (invariance) assumption across groups.
-measInv = glca(item(ABDEFECT, ABHLTH, ABRAPE, ABPOOR, ABSINGLE) ~ 1,
-               group = SEX, data = gss, nclass = 3)
-measVar = glca(item(ABDEFECT, ABHLTH, ABRAPE, ABPOOR, ABSINGLE) ~ 1,
-               group = SEX, data = gss, nclass = 3, measure.inv = FALSE)
+measInv = glca(item(DEFECT, HLTH, RAPE, POOR, SINGLE, NOMORE) ~ 1,
+               group = DEGREE, data = gss08, nclass = 3)
+measVar = glca(item(DEFECT, HLTH, RAPE, POOR, SINGLE, NOMORE) ~ 1,
+               group = DEGREE, data = gss08, nclass = 3, measure.inv = FALSE)
 
 glca.gof(measInv, measVar)
-\dontrun{glca.gof(measInv, measVar, test = "chisq")}
-\dontrun{glca.gof(measInv, measVar, test = "boot")}
+glca.gof(measInv, measVar, test = "chisq")
 }
 }
 \references{
@@ -75,9 +87,11 @@ Akaike, H. (1974) A new look at the statistical model identification. \emph{IEEE
 Schwarz, G. (1978) Estimating the dimensions of a model. \emph{The Annals of Statistics}, \bold{6}, 461–464. \doi{10.1214/aos/1176344136}
 
 Langeheine, R., Pannekoek, J., and van de Pol, F. (1996) Bootstrapping goodness-of-fit measures in categorical data analysis. \emph{Sociological Methods and Research}. \bold{24}. 492-516. \doi{10.1177/0049124196024004004}
+
+Ramaswamy, V., Desarbo, W., Reibstein, D., & Robinson, W. (1993). An Empirical Pooling Approach for Estimating Marketing Mix Elasticities with PIMS Data. Marketing Science, 12(1), 103-124. \doi{10.1287/mksc.12.1.103}
 }
 \seealso{
-\code{\link{glca}} \code{\link{gss}}
+\code{\link{glca}} \code{\link{gss08}} \code{\link{nyts18}}
 }
 \author{
 Youngsun Kim

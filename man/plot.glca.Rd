@@ -4,12 +4,12 @@
 \alias{plot.glca}
 \title{Plots the Estimated Parameters of Fitted glca Model}
 \usage{
-\method{plot}{glca}(x, group.name = NULL, ...)
+\method{plot}{glca}(x, ask = TRUE, ...)
 }
 \arguments{
 \item{x}{an object of "\code{glca}", usually, a result of a call to \code{glca}}
 
-\item{group.name}{a vector of strings which indicates groups, rho-parameters of which will be printed when \code{measure.inv = FALSE}.}
+\item{ask}{a logical value whether to be asked before each plot, see \code{\link{par}(ask=.)}.}
 
 \item{...}{further arguments passed to or from other methods}
 }
@@ -22,28 +22,28 @@ This function plots estimated parameters of model.
 \examples{
 \dontrun{
 # LCA
-lca = glca(item(ABDEFECT, ABHLTH, ABRAPE, ABPOOR, ABSINGLE, ABNOMORE) ~ 1,
-            data = gss, nclass = 3, na.rm = TRUE)
+lca = glca(item(DEFECT, HLTH, RAPE, POOR, SINGLE, NOMORE) ~ 1,
+            data = gss08, nclass = 3, na.rm = TRUE)
 plot(lca)
 
 # Multitple Group LCA (MGLCA)
-mglca1 = glca(item(ABDEFECT, ABHLTH, ABRAPE, ABPOOR, ABSINGLE, ABNOMORE) ~ 1,
-             group = DEGREE, data = gss, nclass = 3)
+mglca1 = glca(item(DEFECT, HLTH, RAPE, POOR, SINGLE, NOMORE) ~ 1,
+             group = DEGREE, data = gss08, nclass = 3)
 plot(mglca1)
 
 # Multitple Group LCA (MGLCA) (measure.inv = FALSE)
-mglca2 = glca(item(ABDEFECT, ABHLTH, ABRAPE, ABPOOR, ABSINGLE, ABNOMORE) ~ 1,
-             group = DEGREE, data = gss, nclass = 3, measure.inv = FALSE)
+mglca2 = glca(item(DEFECT, HLTH, RAPE, POOR, SINGLE, NOMORE) ~ 1,
+             group = DEGREE, data = gss08, nclass = 3, measure.inv = FALSE)
 plot(mglca2)
 plot(mglca2, "all")
 
 # Multilvel LCA (MLCA)
-mlca = glca(item(ABDEFECT, ABHLTH, ABRAPE, ABPOOR, ABSINGLE, ABNOMORE) ~ 1,
-             group = REGION, data = gss, nclass = 3, ncluster = 2)
+mlca = glca(item(ECIGT, ECIGAR, ESLT, EELCIGT, EHOOKAH) ~ 1,
+            group = SCH_ID, data = nyts18, nclass = 3, ncluster = 3)
 plot(mlca)
 }
 
 }
 \seealso{
-\code{\link{glca}}
+\code{\link{glca}} \code{\link{gss08}} \code{\link{nyts18}}
 }
