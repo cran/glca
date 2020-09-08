@@ -1,8 +1,8 @@
 Package: glca
 Type: Package
 Title: Latent Class Analysis with Group Variable
-Date: 2020-09-05
-Version: 1.0.0
+Date: 2020-09-08
+Version: 1.0.1
 Authors@R: 
    c(person("Youngsun", "Kim", email = "kim0sun@korea.ac.kr", role = c("aut", "cre")),
      person("Hwan", "Chung", email = "hwanch@korea.ac.kr", role = c("aut")))
@@ -21,6 +21,6 @@ RoxygenNote: 7.1.1
 Imports: MASS, Rcpp
 LinkingTo: Rcpp
 NeedsCompilation: yes
-Packaged: 2020-09-07 01:53:02 UTC; kim0sun
+Packaged: 2020-09-08 05:11:46 UTC; kim0sun
 Repository: CRAN
-Date/Publication: 2020-09-07 06:30:03 UTC
+Date/Publication: 2020-09-08 06:50:03 UTC

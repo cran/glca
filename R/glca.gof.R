@@ -44,7 +44,7 @@
 #'               data = gss08, nclass = 4)
 #'
 #' glca.gof(class2, class3, class4)
-#' \dontrun{glca.gof(class2, class3, test = "boot")}
+#' \dontrun{glca.gof(class2, class3, class4, test = "boot")}
 #'
 #' ## Example 2.
 #' ## Model selection between two MLCA models with different number of latent clusters.
