@@ -48,12 +48,13 @@
 NULL
 
 #' National Youth Tobacco Survey (NYTS) 2018
+#'
 #' This dataset includes 5 manifest items about abortion and several covariates. From the original 2018 National Youth Tobacco Survey data, the Non Hispanic, white students are selected and schools with 30-50 students were selected. Thus, the dataset has 1743 respondents. The covariates include the sex of the respondents and the school ID to which the respondnets belong, and the level of the corresponding school.
 #'
 #' @name nyts18
 #' @docType data
 #' @keywords datasets
-#' @format A data frame with 1743 observations on the following 8 variables.
+#' @format A data frame with 1734 observations on the following 8 variables.
 #' \describe{
 #' \item{\code{ECIGT}}{Whether to have tried cigarette smoking, even one or two puffs}
 #' \item{\code{ECIGAR}}{Whether to have ever tried cigar smoking, even one or two puffs}
