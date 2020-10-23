@@ -2,8 +2,8 @@ Package: glca
 Type: Package
 Title: An R Package for Estimating a Group-Effect in Latent Class
         Analysis
-Date: 2020-10-14
-Version: 1.0.2
+Date: 2020-10-23
+Version: 1.1.0
 Authors@R: 
    c(person("Youngsun", "Kim", email = "kim0sun@korea.ac.kr", role = c("aut", "cre")),
      person("Hwan", "Chung", email = "hwanch@korea.ac.kr", role = c("aut")))
@@ -24,6 +24,6 @@ LinkingTo: Rcpp
 URL: https://kim0sun.github.io/glca/
 Suggests: covr, testthat
 NeedsCompilation: yes
-Packaged: 2020-10-20 05:00:57 UTC; kim0sun
+Packaged: 2020-10-23 05:50:00 UTC; kim0sun
 Repository: CRAN
-Date/Publication: 2020-10-20 07:10:02 UTC
+Date/Publication: 2020-10-23 10:20:02 UTC
