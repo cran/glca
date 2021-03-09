@@ -16,7 +16,7 @@
 #' @param maxiter maximum number of iterations for the EM algorithm.
 #' @param eps a convergence tolerance value. When the largest absolute difference between former estimates and current estimates is less than \code{eps}, the algorithm will stop updating and consider the convergence to be reached.
 #' @param na.rm a logical value for deleting the lines that have at least one missing manifest item. If \code{na.rm = FALSE}, MAR procedure will be conducted.
-#' @param random.seed  In default, the set of initial parameters is drawn randomly. As the same value for \code{random.seed} guarantees the same initial parameters to be drawn, this argument can be used to generate an identical solution.
+#' @param seed In default, the set of initial parameters is drawn randomly. As the same value for seed guarantees the same initial parameters to be drawn, this argument can be used for reproducibility of estimation results.
 #' @param verbose a logical value indicating whether \code{glca} should print the estimation procedure onto the screen.
 #'
 #' @author Youngsun Kim
@@ -105,13 +105,9 @@
 glca <- function(
    formula, group = NULL, data = NULL, nclass = 3, ncluster = NULL, std.err = TRUE,
    measure.inv = TRUE, coeff.inv = TRUE, init.param = NULL, n.init = 10, testiter = 50,
-   maxiter = 1000, eps = 1e-6, na.rm = FALSE, random.seed = NULL, verbose = TRUE
+   maxiter = 5000, eps = 1e-6, na.rm = FALSE, seed = NULL, verbose = TRUE
 )
 {
-   # Random seed
-   if (is.numeric(random.seed))
-      set.seed(random.seed)
-
    # Function call
    call <- match.call()
    mc <- match(c("formula", "group", "data"), names(call), 0L)
@@ -119,6 +115,10 @@ glca <- function(
    cll[[1L]] <- quote(stats::model.frame)
    mf <- eval(cll, parent.frame())
    terms <- attr(mf, "terms")
+
+   # random seed
+   if (is.null(seed)) set.seed(stats::runif(1, 0, .Machine$integer.max))
+   else set.seed(seed)
 
    # Ecoding arguments (model, datalist, vname)
    # (type, N, Ng, G, C, W, M, R, P, Q, npar)

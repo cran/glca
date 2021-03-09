@@ -16,10 +16,10 @@ glca(
   init.param = NULL,
   n.init = 10,
   testiter = 50,
-  maxiter = 1000,
+  maxiter = 5000,
   eps = 1e-06,
   na.rm = FALSE,
-  random.seed = NULL,
+  seed = NULL,
   verbose = TRUE
 )
 }
@@ -52,7 +52,7 @@ glca(
 
 \item{na.rm}{a logical value for deleting the lines that have at least one missing manifest item. If \code{na.rm = FALSE}, MAR procedure will be conducted.}
 
-\item{random.seed}{In default, the set of initial parameters is drawn randomly. As the same value for \code{random.seed} guarantees the same initial parameters to be drawn, this argument can be used to generate an identical solution.}
+\item{seed}{In default, the set of initial parameters is drawn randomly. As the same value for seed guarantees the same initial parameters to be drawn, this argument can be used for reproducibility of estimation results.}
 
 \item{verbose}{a logical value indicating whether \code{glca} should print the estimation procedure onto the screen.}
 }
