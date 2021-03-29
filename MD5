@@ -1,4 +1,4 @@
-9adf23017837f3544d3768d23c415ba7 *DESCRIPTION
+1e61ec2ae4d8097938a71b59c648cfd8 *DESCRIPTION
 28ef21226697a1a8f24ba41047fdff14 *NAMESPACE
 b83296ba0e535383f0ff15a403242e3a *NEWS.md
 403b7ba0c7e471b4b407d0927a4379ce *R/RcppExports.R
@@ -18,14 +18,14 @@ fcbde38d5dd40e0620b6875da39c0d20 *R/glca_encode.R
 bba214ddec4cfb3b73c906a31b4604f5 *R/item.R
 1fcc4438cf78c9c69618b1a0eda201e8 *R/logLik.glca.R
 b5b1745d6978cad8a1ee711f85b728b1 *R/package.R
-e088fd7a00b8e67ff44f210c235670a9 *R/plot.glca.R
+838e1f1c42ce45121b89abe7d1841c1b *R/plot.glca.R
 8dbb7d165ee868816eeea9452695ad8a *R/print.glca.R
 9218a66e653e594c88ed12308fef6f6a *R/print.gofglca.R
 771d1ad6dc40c4f95287731c85d05a36 *R/summary.glca.R
-d405128ea18446e77bf587ea791dcd45 *build/partial.rdb
+a893f881324d3a169794857965bf5f06 *build/partial.rdb
 13b9ee0ba73e7a60046110f0e239bfbd *data/gss08.rda
 1fec932238678de283335b21345dda11 *data/nyts18.rda
-f21ac08c836c7b34dd9048795a0a5889 *inst/CITATION
+f23f1269262f204a5a22924db6326112 *inst/CITATION
 bee6479fa2cac4e1126b259db567e3cb *man/coef.glca.Rd
 fe06cb9317595d98ede3402cbc134de1 *man/glca-package.Rd
 bbd32a864fedf869596f4ed80962d590 *man/glca.Rd
