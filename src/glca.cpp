@@ -857,7 +857,7 @@ NumericVector GetUDfit(IntegerMatrix pattern,
          for (c = 0; c < C; c ++)
             fitted[i] +=
                delta[w] * gamma_m(w, c) * MeasP(i, c) /
-               std::numeric_limits<double>::max() * N;
+                  std::numeric_limits<double>::max() * N;
 
    return fitted;
 }
@@ -944,7 +944,7 @@ List GetDeriv(NumericMatrix post,
                {
                   hess(c1 * P + p, c2 * P + q) +=
                      x(i, p) * x(i, q) *
-                        - gamma(i, c1) * (ind - gamma(i, c2));
+                     - gamma(i, c1) * (ind - gamma(i, c2));
                }
             }
          }
@@ -991,13 +991,13 @@ List GetDeriv2(List post,
                hess(g * (C - 1) + c1, g * (C - 1) + c2) +=
                   - gamma_g(i, c1) * (ind - gamma_g(i, c2));
 
-               for (p = 1; p < P; p ++)
-               {
-                  hess(g * (C - 1) + c1, G * (C - 1) + c2 * (P - 1) + p - 1) +=
-                     - x_g(i, p) * gamma_g(i, c1) * (ind - gamma_g(i, c2));
-                  hess(G * (C - 1) + c2 * (P - 1) + p - 1, g * (C - 1) + c1) +=
-                     - x_g(i, p) * gamma_g(i, c1) * (ind - gamma_g(i, c2));
-               }
+                  for (p = 1; p < P; p ++)
+                  {
+                     hess(g * (C - 1) + c1, G * (C - 1) + c2 * (P - 1) + p - 1) +=
+                        - x_g(i, p) * gamma_g(i, c1) * (ind - gamma_g(i, c2));
+                        hess(G * (C - 1) + c2 * (P - 1) + p - 1, g * (C - 1) + c1) +=
+                        - x_g(i, p) * gamma_g(i, c1) * (ind - gamma_g(i, c2));
+                  }
             }
 
             for (p = 1; p < P; p ++) // gradient
@@ -1013,8 +1013,8 @@ List GetDeriv2(List post,
                   {
                      hess(G * (C - 1) + c1 * (P - 1) + p - 1,
                           G * (C - 1) + c2 * (P - 1) + q - 1) +=
-                        x_g(i, p) * x_g(i, q) *
-                        - gamma_g(i, c1) * (ind - gamma_g(i, c2));
+                             x_g(i, p) * x_g(i, q) *
+                             - gamma_g(i, c1) * (ind - gamma_g(i, c2));
                   }
                }
             }
